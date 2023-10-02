@@ -22,8 +22,8 @@ def set(request):
     return response
  
 def get(request):
-    username = request.COOKIES["username"]
-    return HttpResponse(f"{username}")
+    print(Movie.objects.all())
+    return render(request, "index.html")
 
 def upload(request: HttpRequest):
     file_name = request.GET.get("file")
@@ -40,3 +40,7 @@ def upload(request: HttpRequest):
             print(f"{len(title)} ----- {title}")
             Movie.objects.create(name=title, year=year, genres=row[2])
     return HttpResponse("Dataset uploaded")
+
+def delete(request: HttpResponse):
+    Movie.objects.all().delete()
+    return render(request, "index.html")
