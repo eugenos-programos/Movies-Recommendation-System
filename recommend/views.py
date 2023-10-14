@@ -22,8 +22,7 @@ def set(request):
     return response
  
 def get(request):
-    print(Movie.objects.all())
-    return render(request, "index.html")
+    return render(request, "movies.html", context={"movies": Movie.objects.all()})
 
 def upload(request: HttpRequest):
     file_name = request.GET.get("file")

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Movies</title>
+</head>
+<body>
+{% for movie in movies %}
+    <div>
+        <p>Movie - {{ movie.name }}</p>
+        <p>Year - "{{ movie.year }}"</p>
+        <p>Genres - "{{ movie.genres }}"</p>
+        <hr></hr>
+    </div>
+{% endfor %}
+<script>
+    console.log("movies object type - " + typeof(movies))
+</script>
+</body>
+</html>
