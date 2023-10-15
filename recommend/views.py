@@ -1,5 +1,10 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponsePermanentRedirect, JsonResponse
+from django.http import HttpResponse, HttpRequest, HttpResponseNotFound
+from .models import Movie
+import csv
+import os
+import re
+
   
 def index(request):
     return render(request, "index.html")
@@ -17,11 +22,24 @@ def set(request):
     return response
  
 def get(request):
-    username = request.COOKIES["username"]
-    return HttpResponse(f"{username}")
+    return render(request, "movies.html", context={"movies": Movie.objects.all()})
 
-def contact(request):
-    return HttpResponseRedirect("/about")
+def upload(request: HttpRequest):
+    file_name = request.GET.get("file")
+    if not os.path.exists(file_name):
+        return HttpResponseNotFound(f"File {file_name} is not found")
+    with open(file_name, 'r', newline='') as csvfile:
+        csvreader = csv.reader(csvfile, delimiter=',')
+        next(csvreader)
+        for row in csvreader:
+            print(row)
+            year = re.findall(r"(\d{4})", row[1])
+            year = None if not year else year[-1]
+            title = row[1][:row[1].find('(' + year + ')')] if year else row[1]
+            print(f"{len(title)} ----- {title}")
+            Movie.objects.create(name=title, year=year, genres=row[2])
+    return HttpResponse("Dataset uploaded")
 
-def details(request):
-    return HttpResponsePermanentRedirect("/")
+def delete(request: HttpResponse):
+    Movie.objects.all().delete()
+    return render(request, "index.html")
